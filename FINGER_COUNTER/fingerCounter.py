@@ -1,0 +1,59 @@
+import cv2
+import time
+import os
+import HandTrackingModule as htm
+
+wcam, hcam = 640, 480
+
+video = cv2.VideoCapture(0)
+video.set(3, wcam)
+video.set(4, hcam)
+
+folderPath = 'fingers'
+myList = os.listdir(folderPath)
+print(myList)
+overlayList = []
+for imgPath in myList:
+    image = cv2.imread(f'{folderPath}/{imgPath}')
+    overlayList.append(image)
+
+print(len(overlayList))
+pTime = 0
+
+detector = htm.handDetector(detectCon = 0.75)
+tipId = [4,8,12,16,20]
+
+#right_hand
+while True:
+    success, img = video.read()
+    img = detector.findHands(img)
+    lmList = detector.findPosition(img, draw = False)
+   # print(lmList)
+    if len(lmList) != 0:
+        fingers = []
+
+        #THUMB
+        if lmList[tipId[0]][1] > lmList[tipId[0] - 1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+        #4 FINGERS
+        for id in range(1,5):
+            if lmList[tipId[id]][2] < lmList[tipId[id]-2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+        #print(fingers)
+        totalFingers = fingers.count(1)
+        print(totalFingers)
+        h, w, c = overlayList[totalFingers-1].shape
+        img[0:h, 0:w] = overlayList[totalFingers-1]
+        cv2.rectangle(img, (0, 255), (170,425), (0,255,0), cv2.FILLED)
+        cv2.putText(img, str(totalFingers),(45,375), cv2.FONT_ITALIC,3,(255,0,0),20)
+    cTime = time.time()
+    fps = 1/(cTime-pTime)
+    pTime = cTime
+    cv2.putText(img,f'FPS:{int(fps)}',(450,50),cv2.FONT_ITALIC,1,(128,0,0),4)
+    cv2.imshow('video', img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
