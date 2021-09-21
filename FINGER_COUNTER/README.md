@@ -3,7 +3,7 @@
 
 The aim of this project is to recognize the hand pattern and give
 an output of the number between zero to five.This is a simple and
-intresting project, and great for high school projects also for 
+interesting project, and great for high school projects also for 
 those who want to get into the field of computer vision
 ## Screenshot
 
