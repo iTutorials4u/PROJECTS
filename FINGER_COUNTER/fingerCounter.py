@@ -5,7 +5,7 @@ import HandTrackingModule as htm
 
 wcam, hcam = 640, 480
 
-video = cv2.VideoCapture(0)
+video = cv2.VideoCapture(0) #change value to 1 for external webcam
 video.set(3, wcam)
 video.set(4, hcam)
 
@@ -23,7 +23,7 @@ pTime = 0
 detector = htm.handDetector(detectCon = 0.75)
 tipId = [4,8,12,16,20]
 
-#right_hand
+#right_hand code
 while True:
     success, img = video.read()
     img = detector.findHands(img)
@@ -55,5 +55,5 @@ while True:
     pTime = cTime
     cv2.putText(img,f'FPS:{int(fps)}',(450,50),cv2.FONT_ITALIC,1,(128,0,0),4)
     cv2.imshow('video', img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'): #press 'q' on your keyboard to exit the program
         break
